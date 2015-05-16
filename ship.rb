@@ -1,10 +1,10 @@
 class Ship
+  include Enumerable
   attr_reader :ship_placed
 
   def initialize(length)
     @length = length
     @ship_placed = []
-    @hits = 0
   end
 
   def length
@@ -25,7 +25,12 @@ class Ship
   end
 
   def covers?(x, y)
-    @ship_placed.any? {|hole| hole.x == x && hole.y == y }
+    covered_hole = @ship_placed.select {|hole| hole.x == x && hole.y == y }
+    if covered_hole.empty?
+      return false
+    else
+      covered_hole
+    end
   end
 
   def overlaps_with?(ship)
@@ -37,10 +42,13 @@ class Ship
   end
 
   def fire_at(x, y)
-    @hits += 1 if self.covers?(x, y)
+    covered_hole = self.covers?(x,y)
+    covered_hole.select {|hole| hole.mark_hit } if covered_hole
   end
 
   def sunk?
-    @hits >= @length
+    require 'pry'
+    binding.pry
+    @ship_placed.all? {|hole| hole.hit? }
   end
 end

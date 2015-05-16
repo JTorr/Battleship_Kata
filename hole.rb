@@ -5,9 +5,14 @@ class Hole
   def initialize(x, y)
     @x = x
     @y = y
+    @hit = false
   end
 
   def hit?
-    false
+    @hit
+  end
+
+  def mark_hit
+    @hit = true
   end
 end
