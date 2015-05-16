@@ -1,4 +1,6 @@
 class Ship
+  attr_reader :ship_placed
+
   def initialize(length)
     @length = length
     @ship_placed = []
@@ -13,22 +15,25 @@ class Ship
     return false unless @ship_placed.empty?
     if horizontal == true
       tail = x + @length -1
-      (x..tail).map {|x| @ship_placed << [x, y] }
+      (x..tail).map {|x| @ship_placed << Hole.new(x, y) }
       return @ship_placed
     else
       tail = y + @length -1
-      (y..tail).map {|y| @ship_placed << [x, y] }
+      (y..tail).map {|y| @ship_placed << Hole.new(x, y) }
       return @ship_placed
     end
   end
 
   def covers?(x, y)
-    @ship_placed.include?([x, y])
+    @ship_placed.any? {|hole| hole.x == x && hole.y == y }
   end
 
   def overlaps_with?(ship)
-    result =  @ship_placed[0..-1].map { |sub_array| ship.covers?(sub_array[0], sub_array[1]) }
-    result.include?(true)
+    a = []
+    b = []
+    @ship_placed.map {|hole| a << [hole.x, hole.y] }
+    ship.ship_placed.map {|hole| b << [hole.x, hole.y] }
+    (a & b).any?  
   end
 
   def fire_at(x, y)
